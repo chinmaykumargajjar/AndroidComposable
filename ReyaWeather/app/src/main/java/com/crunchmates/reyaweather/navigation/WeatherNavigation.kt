@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.crunchmates.reyaweather.screens.MainScreen
 import com.crunchmates.reyaweather.screens.WeatherSplashScreen
 
 // The WeatherNavigation function is a Composable that manages the navigation for the app.
@@ -27,6 +28,11 @@ fun WeatherNavigation() {
         composable(WeatherScreens.SplashScreen.name) {
             // Navigate to the WeatherSplashScreen composable when this route is triggered.
             WeatherSplashScreen(navController)
+        }
+
+        composable(WeatherScreens.MainScreen.name) {
+            // Navigate to the WeatherSplashScreen composable when this route is triggered.
+            MainScreen(navController)
         }
     }
 }
