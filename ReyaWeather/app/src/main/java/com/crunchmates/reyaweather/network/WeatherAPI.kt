@@ -1,5 +1,6 @@
 package com.crunchmates.reyaweather.network
 
+import com.crunchmates.reyaweather.model.Weather
 import com.crunchmates.reyaweather.model.WeatherObject
 import com.crunchmates.reyaweather.utils.Constants
 import retrofit2.http.GET
@@ -13,6 +14,5 @@ interface WeatherAPI {
         @Query("q") query: String,
         @Query("units") units: String = "imperial",
         @Query("appid") appid: String = Constants.API_KEY
-    ): WeatherObject
-
+    ): Weather
 }
