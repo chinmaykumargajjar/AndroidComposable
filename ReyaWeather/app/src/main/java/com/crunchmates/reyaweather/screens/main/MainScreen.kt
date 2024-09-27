@@ -17,8 +17,9 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel = hilt
 @Composable
 fun ShowData(mainViewModel: MainViewModel) {
     val weatherData = produceState<DataOrException<Weather, Boolean, Exception>> (
-        initialValue = DataOrException(loading = true)) {
-        value = mainViewModel.getWeatherData(city = "Seattle")
+        initialValue = DataOrException(loading = true)
+    ) {
+        value = mainViewModel.getWeatherData(city = "Toronto")
     }.value
 
     if (weatherData.loading == true) {

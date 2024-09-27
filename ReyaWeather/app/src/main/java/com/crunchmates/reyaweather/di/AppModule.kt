@@ -12,8 +12,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
+@Module //Class that provides dependencies
+@InstallIn(SingletonComponent::class) // Making this available applciation wide
 class AppModule {
     val loggingInterceptor = HttpLoggingInterceptor()
 
@@ -21,8 +21,8 @@ class AppModule {
         .addInterceptor(loggingInterceptor)
         .build()
 
-    @Provides
-    @Singleton
+    @Provides // Tells how to provide instance of a type
+    @Singleton // It should be singleton within hilt container
     fun provideOpenWeatherApi(): WeatherAPI {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         return Retrofit.Builder()
