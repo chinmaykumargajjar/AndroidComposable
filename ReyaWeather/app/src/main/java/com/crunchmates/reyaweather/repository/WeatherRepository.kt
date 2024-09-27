@@ -1,5 +1,6 @@
 package com.crunchmates.reyaweather.repository
 
+import android.util.Log
 import androidx.core.text.util.LocalePreferences.TemperatureUnit.TemperatureUnits
 import com.crunchmates.reyaweather.data.DataOrException
 import com.crunchmates.reyaweather.model.City
@@ -16,8 +17,10 @@ class WeatherRepository @Inject constructor(private  val api: WeatherAPI) {
         val response = try {
             api.getWeather(query = cityQuery)
         }catch (e: Exception) {
+            Log.d("INSIDE", "getWeather : $e")
             return DataOrException(e = e)
         }
+
         return DataOrException(data = response)
     }
 }
