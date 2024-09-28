@@ -1,21 +1,58 @@
 package com.crunchmates.reyaweather.screens.main
 
 import android.annotation.SuppressLint
+import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
+import com.crunchmates.reyaweather.R
 import com.crunchmates.reyaweather.data.DataOrException
 import com.crunchmates.reyaweather.model.Weather
+import com.crunchmates.reyaweather.model.WeatherItem
+import com.crunchmates.reyaweather.utils.formatDate
+import com.crunchmates.reyaweather.utils.formatDateTime
+import com.crunchmates.reyaweather.utils.formatDecimals
+import com.crunchmates.reyaweather.widget.HumidityWindPressureRow
+import com.crunchmates.reyaweather.widget.SunsetAndSunriseRow
 import com.crunchmates.reyaweather.widget.WeatherAppBar
+import com.crunchmates.reyaweather.widget.WeatherDetailRow
+import com.crunchmates.reyaweather.widget.WeatherStateImage
 
 @Composable
 fun MainScreen(navController: NavController, mainViewModel: MainViewModel = hiltViewModel()) {
@@ -23,7 +60,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel = hilt
     val weatherData = produceState<DataOrException<Weather, Boolean, Exception>> (
         initialValue = DataOrException(loading = true)
     ) {
-        value = mainViewModel.getWeatherData(city = "Toronto")
+        value = mainViewModel.getWeatherData(city = "Gandhinagar")
     }.value
 
     if (weatherData.loading == true) {
@@ -37,10 +74,13 @@ fun MainScaffold(weather: Weather, navController: NavController) {
     Scaffold(
         topBar = {
             WeatherAppBar(
-                title = "Helena, MT",
+                title = weather.city.name+",${weather.city.country}",
                 navController = navController,
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
                 elevation = 5.dp
-            )
+            ) { // Trailing Lambda of On Button Clicked since it was last lambda passed
+                Log.d("TAG", "MainScaffold: Button Clicked")
+            }
         }
     ) { paddingValues ->  // `paddingValues` represents the padding that Scaffold applies.
         MainContent(data = weather, paddingValues = paddingValues)
@@ -50,9 +90,62 @@ fun MainScaffold(weather: Weather, navController: NavController) {
 @Composable
 fun MainContent(data: Weather, paddingValues: PaddingValues) {
     // Apply the padding from Scaffold to ensure the content doesn't get obscured.
-    Column(modifier = Modifier.padding(paddingValues)) {
-        Text(text = data.city.name)
+    val imageUrl = "https://openweathermap.org/img/wn/${data!!.list[0].weather[0].icon}.png"
+    val weatherItem = data.list[0]
+
+    Column(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+
+        Text(text = formatDate(weatherItem.dt),
+            style = MaterialTheme.typography.caption,
+            color = MaterialTheme.colors.onSecondary,
+            modifier = Modifier.padding(6.dp),
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Surface (
+            modifier = Modifier
+                .padding(4.dp)
+                .size(200.dp),
+            shape = CircleShape,
+            color = Color(0xFFFFC400)
+        ) {
+            Column(verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                //Image Loading from Url
+                WeatherStateImage(imageUrl = imageUrl)
+                Text(text = formatDecimals(weatherItem.temp.day)+"º", style = MaterialTheme.typography.h4,
+                    fontWeight = FontWeight.ExtraBold)
+                Text(text = weatherItem.weather[0].main, fontStyle = FontStyle.Italic)
+            }
+        }
         // Add more content if needed
+        HumidityWindPressureRow(weather = weatherItem)
+        Divider()
+        SunsetAndSunriseRow(weather = weatherItem)
+
+        Text(text = "This Week",
+            style = MaterialTheme.typography.subtitle1,
+            fontWeight = FontWeight.Bold)
+
+        Surface(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+            color = Color(0xFFEEF1EF),
+            shape = RoundedCornerShape(size = 14.dp)
+        ){
+            LazyColumn(
+                modifier = Modifier.padding(2.dp),
+                contentPadding = PaddingValues(1.dp)
+            ) {
+                items(items = data.list) { item: WeatherItem ->
+                    WeatherDetailRow(weather = item)
+                }
+            }
+        }
     }
 }
-

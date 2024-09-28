@@ -1,9 +1,17 @@
 package com.crunchmates.reyaweather.widget
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
@@ -27,10 +35,34 @@ fun WeatherAppBar(
 
     TopAppBar(
         title = {
-            Text(text = title)
+            Text(text = title,
+                color = MaterialTheme.colors.onSecondary,
+                style = TextStyle(fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp))
         },
-        actions = {},
-        navigationIcon = {},
+        actions = {
+            if(isMainScreen){
+                IconButton(onClick = { /*TODO*/ }) {
+                    androidx.compose.material.Icon(imageVector = Icons.Default.Search,
+                        contentDescription = null)
+                }
+                IconButton(onClick = { /*TODO*/ }) {
+                    androidx.compose.material.Icon(imageVector = Icons.Rounded.MoreVert,
+                        contentDescription = null )
+                }
+            } else Box {
+
+            }
+        },
+        navigationIcon = {
+            if(icon != null) {
+                androidx.compose.material.Icon(imageVector = icon, contentDescription = null,
+                    tint = MaterialTheme.colors.onSecondary,
+                    modifier = Modifier.clickable{
+                        onButtonClicked.invoke()
+                    })
+            }
+        },
         backgroundColor = Color.Transparent,
         elevation = elevation)
 
