@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ReyaWeather</string>
+    <string name="about_app">Weather App Version 0 by Open Weather</string>
+    <string name="api_used">Open Weather API</string>
 </resources>

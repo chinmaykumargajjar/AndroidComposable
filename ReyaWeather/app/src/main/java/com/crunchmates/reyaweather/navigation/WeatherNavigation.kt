@@ -2,11 +2,17 @@ package com.crunchmates.reyaweather.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.crunchmates.reyaweather.screens.FavoriteScreen.FavoriteScreen
+import com.crunchmates.reyaweather.screens.about.AboutScreen
 import com.crunchmates.reyaweather.screens.main.MainScreen
 import com.crunchmates.reyaweather.screens.main.MainViewModel
+import com.crunchmates.reyaweather.screens.search.SearchScreen
+import com.crunchmates.reyaweather.screens.settings.SettingsScreen
 import com.crunchmates.reyaweather.screens.splash.WeatherSplashScreen
 
 // The WeatherNavigation function is a Composable that manages the navigation for the app.
@@ -32,10 +38,37 @@ fun WeatherNavigation() {
             WeatherSplashScreen(navController)
         }
 
-        composable(WeatherScreens.MainScreen.name) {
+        //
+        val route = WeatherScreens.MainScreen.name
+        composable("$route/{city}",
+            arguments = listOf(
+                navArgument( name = "city") {
+                    type = NavType.StringType
+                })) { navBack ->
+            navBack.arguments?.getString("city").let { city ->
+                val mainViewModel = hiltViewModel<MainViewModel>()
+                MainScreen(navController = navController, mainViewModel, city=city)
+            }
+
             // Navigate to the WeatherSplashScreen composable when this route is triggered.
-            val mainViewModel = hiltViewModel<MainViewModel>()
-            MainScreen(navController = navController, mainViewModel)
+
+        }
+
+        composable(WeatherScreens.SearchScreen.name) {
+            // Navigate to the WeatherSplashScreen composable when this route is triggered.
+            SearchScreen(navController = navController)
+        }
+        composable(WeatherScreens.FavoriteScreen.name) {
+            // Navigate to the WeatherSplashScreen composable when this route is triggered.
+            FavoriteScreen(navController = navController)
+        }
+        composable(WeatherScreens.SettingsScreen.name) {
+            // Navigate to the WeatherSplashScreen composable when this route is triggered.
+            SettingsScreen(navController = navController)
+        }
+        composable(WeatherScreens.AboutScreen.name) {
+            // Navigate to the WeatherSplashScreen composable when this route is triggered.
+            AboutScreen(navController = navController)
         }
     }
 }
