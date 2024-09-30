@@ -71,7 +71,6 @@ fun MainScaffold(weather: Weather, navController: NavController) {
                 onAddActionClicked = {
                     navController.navigate(WeatherScreens.SearchScreen.name);
                 },
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
                 elevation = 5.dp
             ) { // Trailing Lambda of On Button Clicked since it was last lambda passed
                 Log.d("TAG", "MainScaffold: Button Clicked")

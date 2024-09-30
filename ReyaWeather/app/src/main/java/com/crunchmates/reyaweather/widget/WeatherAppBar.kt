@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.crunchmates.reyaweather.model.Favorite
 import com.crunchmates.reyaweather.navigation.WeatherScreens
 import com.crunchmates.reyaweather.screens.FavoriteScreen.FavoriteViewModel
 
@@ -99,13 +100,17 @@ fun WeatherAppBar(
             }
             if(isMainScreen) {
                 androidx.compose.material.Icon(
-                    imageVector = Icons.Default.FavoriteBorder,
+                    imageVector = Icons.Default.Favorite,
                     contentDescription ="Favorite Icon",
                     modifier = Modifier.scale(0.9f).clickable {
-
-                    })
+                        val dataList = title.split(",")
+                        favoriteViewModel.insertFavorite(Favorite(
+                            city = dataList[0], //city name
+                            country = dataList[1] //country code
+                        ))
+                    },
+                    tint = Color.Red.copy(alpha = 0.6f))
             }
-
         },
         backgroundColor = Color.Transparent,
         elevation = elevation)
