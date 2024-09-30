@@ -3,9 +3,9 @@ package com.crunchmates.reyaweather.screens.settings
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.crunchmates.reyaweather.model.Favorite
 import com.crunchmates.reyaweather.model.Unit
 import com.crunchmates.reyaweather.repository.WeatherDbRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class SettingsViewModel @Inject constructor(private  val repository: WeatherDbRepository)
     : ViewModel(){
     private val _unitList = MutableStateFlow<List<Unit>>(emptyList())

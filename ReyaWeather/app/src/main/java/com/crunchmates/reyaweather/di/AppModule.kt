@@ -6,6 +6,7 @@ import com.crunchmates.reyaweather.data.WeatherDao
 import com.crunchmates.reyaweather.data.WeatherDatabase
 import com.crunchmates.reyaweather.model.Weather
 import com.crunchmates.reyaweather.network.WeatherAPI
+import com.crunchmates.reyaweather.repository.WeatherDbRepository
 import com.crunchmates.reyaweather.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -35,6 +36,13 @@ class AppModule {
         "weather_database")
         .fallbackToDestructiveMigration()
         .build()
+
+    // **Add this method to provide WeatherDbRepository**
+    @Singleton
+    @Provides
+    fun provideWeatherDbRepository(weatherDao: WeatherDao): WeatherDbRepository {
+        return WeatherDbRepository(weatherDao)
+    }
 
     val loggingInterceptor = HttpLoggingInterceptor()
 
