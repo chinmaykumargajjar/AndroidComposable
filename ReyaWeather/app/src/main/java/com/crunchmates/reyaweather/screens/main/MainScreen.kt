@@ -52,7 +52,8 @@ fun MainScreen(
     val weatherData = produceState<DataOrException<Weather, Boolean, Exception>> (
         initialValue = DataOrException(loading = true)
     ) {
-        value = mainViewModel.getWeatherData(city = city!!)
+        value = mainViewModel.getWeatherData(city = city.toString()
+        )
     }.value
 
     if (weatherData.loading == true) {
