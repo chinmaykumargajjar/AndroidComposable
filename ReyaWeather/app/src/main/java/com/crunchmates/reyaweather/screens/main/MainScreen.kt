@@ -17,11 +17,14 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +37,7 @@ import com.crunchmates.reyaweather.data.DataOrException
 import com.crunchmates.reyaweather.model.Weather
 import com.crunchmates.reyaweather.model.WeatherItem
 import com.crunchmates.reyaweather.navigation.WeatherScreens
+import com.crunchmates.reyaweather.screens.settings.SettingsViewModel
 import com.crunchmates.reyaweather.utils.formatDate
 import com.crunchmates.reyaweather.utils.formatDecimals
 import com.crunchmates.reyaweather.widget.HumidityWindPressureRow
@@ -41,29 +45,47 @@ import com.crunchmates.reyaweather.widget.SunsetAndSunriseRow
 import com.crunchmates.reyaweather.widget.WeatherAppBar
 import com.crunchmates.reyaweather.widget.WeatherDetailRow
 import com.crunchmates.reyaweather.widget.WeatherStateImage
+import java.util.Locale
 
 @Composable
 fun MainScreen(
     navController: NavController,
     mainViewModel: MainViewModel = hiltViewModel(),
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
     city: String?
 ) {
-    Log.d("TAG","MainScreen: ${city.toString()}")
-    val weatherData = produceState<DataOrException<Weather, Boolean, Exception>> (
-        initialValue = DataOrException(loading = true)
-    ) {
-        value = mainViewModel.getWeatherData(city = city.toString()
-        )
-    }.value
+    var curCity: String = if(city!!.isBlank()) "Toronto" else city
+    val unitFromDb = settingsViewModel.unitList.collectAsState().value
+    var unit by remember {
+        mutableStateOf("Imperial")
+    }
 
-    if (weatherData.loading == true) {
-        CircularProgressIndicator()
-    } else if (weatherData.data != null) {
-        MainScaffold(weather = weatherData.data!!, navController)
+    var isImperial by remember {
+        mutableStateOf(false)
+    }
+
+    if(!unitFromDb.isNullOrEmpty()) {
+        Log.d("TAG","MainScreen: ${city.toString()}")
+        unit = unitFromDb[0].unit.split(" ")[0].lowercase(Locale.ROOT)
+
+        isImperial = unit == "imperial"
+        val weatherData = produceState<DataOrException<Weather, Boolean, Exception>> (
+            initialValue = DataOrException(loading = true)
+        ) {
+            value = mainViewModel.getWeatherData(city = city.toString(),
+                units = unit
+            )
+        }.value
+
+        if (weatherData.loading == true) {
+            CircularProgressIndicator()
+        } else if (weatherData.data != null) {
+            MainScaffold(weather = weatherData.data!!, navController, isImperial)
+        }
     }
 }
 @Composable
-fun MainScaffold(weather: Weather, navController: NavController) {
+fun MainScaffold(weather: Weather, navController: NavController, isImperial: Boolean) {
     Scaffold(
         topBar = {
             WeatherAppBar(
@@ -78,12 +100,12 @@ fun MainScaffold(weather: Weather, navController: NavController) {
             }
         }
     ) { paddingValues ->  // `paddingValues` represents the padding that Scaffold applies.
-        MainContent(data = weather, paddingValues = paddingValues)
+        MainContent(data = weather, paddingValues = paddingValues, isImperial)
     }
 }
 
 @Composable
-fun MainContent(data: Weather, paddingValues: PaddingValues) {
+fun MainContent(data: Weather, paddingValues: PaddingValues, isImperial: Boolean) {
     // Apply the padding from Scaffold to ensure the content doesn't get obscured.
     val imageUrl = "https://openweathermap.org/img/wn/${data!!.list[0].weather[0].icon}.png"
     val weatherItem = data.list[0]
@@ -119,7 +141,7 @@ fun MainContent(data: Weather, paddingValues: PaddingValues) {
             }
         }
         // Add more content if needed
-        HumidityWindPressureRow(weather = weatherItem)
+        HumidityWindPressureRow(weather = weatherItem, isImperial)
         Divider()
         SunsetAndSunriseRow(weather = weatherItem)
 
