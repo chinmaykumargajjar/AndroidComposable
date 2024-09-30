@@ -1,10 +1,16 @@
 package com.crunchmates.reyaweather.di
 
+import android.content.Context
+import androidx.room.Room
+import com.crunchmates.reyaweather.data.WeatherDao
+import com.crunchmates.reyaweather.data.WeatherDatabase
+import com.crunchmates.reyaweather.model.Weather
 import com.crunchmates.reyaweather.network.WeatherAPI
 import com.crunchmates.reyaweather.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -15,6 +21,21 @@ import javax.inject.Singleton
 @Module //Class that provides dependencies
 @InstallIn(SingletonComponent::class) // Making this available applciation wide
 class AppModule {
+    @Singleton
+    @Provides
+    fun provideWeatherDao(weatherDatabase: WeatherDatabase): WeatherDao
+    = weatherDatabase.weatherDao()
+
+    @Singleton
+    @Provides
+    fun provideAppDatabsase(@ApplicationContext context: Context): WeatherDatabase
+    = Room.databaseBuilder(
+        context,
+        WeatherDatabase::class.java,
+        "weather_database")
+        .fallbackToDestructiveMigration()
+        .build()
+
     val loggingInterceptor = HttpLoggingInterceptor()
 
     val okHttpClient = OkHttpClient.Builder()
@@ -32,6 +53,8 @@ class AppModule {
             .build()
             .create(WeatherAPI::class.java)
     }
+
+}
 
 /*
 What the Code Does
@@ -52,4 +75,3 @@ Adds a GsonConverterFactory to handle the conversion of JSON data into Kotlin/Ja
 Finally, it builds the Retrofit instance and creates the WeatherAPI interface.
 Singleton Pattern By using @Singleton, we ensure that the WeatherAPI instance is a singleton, meaning the app will use a single, shared instance of WeatherAPI across the whole application.
  */
-}
