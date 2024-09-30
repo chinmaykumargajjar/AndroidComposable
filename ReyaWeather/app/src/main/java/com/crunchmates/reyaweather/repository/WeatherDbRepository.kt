@@ -3,6 +3,7 @@ package com.crunchmates.reyaweather.repository
 import com.crunchmates.reyaweather.data.WeatherDao
 import com.crunchmates.reyaweather.model.City
 import com.crunchmates.reyaweather.model.Favorite
+import com.crunchmates.reyaweather.model.Unit
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -18,4 +19,14 @@ class WeatherDbRepository @Inject constructor(private val weatherDao: WeatherDao
     suspend fun deleteFavorite(favorite: Favorite) = weatherDao.deleteFavorite(favorite)
 
     suspend fun getFavById(city: String): Favorite = weatherDao.getFavById(city)
+
+    fun getUnits(): Flow<List<Unit>> = weatherDao.getUnits()
+
+    suspend fun insertUnit(unit: Unit) = weatherDao.insertUnit(unit)
+
+    suspend fun updateUnit(unit: Unit) = weatherDao.updateUnit(unit)
+
+    suspend fun deleteAllUnits() = weatherDao.deleteAllUnits()
+
+    suspend fun deleteUnit(unit: Unit) = weatherDao.deleteUnit(unit)
 }
