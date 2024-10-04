@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.google.firebase.auth.FirebaseAuth
 import com.spicydroid.NirvanaReader.navigation.ReaderScreens
 import kotlinx.coroutines.delay
 
@@ -43,6 +44,12 @@ fun ReaderSplashScreen(navController: NavHostController = NavHostController(cont
                         .getInterpolation(it)
                 }))
         delay(2000L)
+
+//        if(FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()){
+//            navController.navigate(ReaderScreens.LoginScreen.name)
+//        } else {
+//            navController.navigate(ReaderScreens.ReaderHomeScreen.name)
+//        }
         navController.navigate(ReaderScreens.LoginScreen.name)
     }
 
