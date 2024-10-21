@@ -49,7 +49,6 @@ fun WeatherNavigation() {
                 val mainViewModel = hiltViewModel<MainViewModel>()
                 MainScreen(navController = navController, mainViewModel, city=city)
             }
-
             // Navigate to the WeatherSplashScreen composable when this route is triggered.
 
         }

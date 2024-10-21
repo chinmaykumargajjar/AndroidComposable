@@ -18,7 +18,7 @@ class SettingsViewModel @Inject constructor(private  val repository: WeatherDbRe
     : ViewModel(){
     private val _unitList = MutableStateFlow<List<Unit>>(emptyList())
     val unitList = _unitList.asStateFlow()
-
+    
     init {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getUnits().distinctUntilChanged()

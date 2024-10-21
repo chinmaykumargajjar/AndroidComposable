@@ -1,5 +1,6 @@
 package com.crunchmates.reyaweather.screens.main
 
+import android.os.Trace
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -54,6 +55,7 @@ fun MainScreen(
     settingsViewModel: SettingsViewModel = hiltViewModel(),
     city: String?
 ) {
+    //Trace.beginSection("ConfigureMainScreen")
     var curCity: String = if(city!!.isBlank()) "Toronto" else city
     val unitFromDb = settingsViewModel.unitList.collectAsState().value
     var unit by remember {
@@ -83,6 +85,7 @@ fun MainScreen(
             MainScaffold(weather = weatherData.data!!, navController, isImperial)
         }
     }
+    Trace.endSection()
 }
 @Composable
 fun MainScaffold(weather: Weather, navController: NavController, isImperial: Boolean) {

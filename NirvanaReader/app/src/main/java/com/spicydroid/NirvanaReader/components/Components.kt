@@ -64,7 +64,6 @@ fun EmailInput(modifier: Modifier = Modifier, emailState: MutableState<String>,
                imeAction: ImeAction = androidx.compose.ui.text.input.ImeAction.Next,
                onAction: KeyboardActions = KeyboardActions.Default
 ) {
-
     InputField(modifier = modifier,
         valueState = emailState,
         labelId = labelId,
